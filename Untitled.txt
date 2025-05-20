@@ -2,3 +2,15 @@
 
 
 -Xms512m -Xmx2048m -XX:+UseG1GC -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:gc.log
+
+
+
+
+<bean id="jsonFileListItemReader" class="com.example.JsonFileListItemReader">
+    <property name="resource" value="classpath:data/input.json"/>
+    <property name="classToBound" value="com.example.MyObject"/>
+</bean>
+
+<bean id="synchronizedItemReader" class="org.springframework.batch.item.support.SynchronizedItemStreamReader">
+    <property name="delegate" ref="jsonFileListItemReader"/>
+</bean>
