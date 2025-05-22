@@ -1,0 +1,40 @@
+<batch:job id="jsonDataLoadJob">
+
+    <!-- Step 1: Initialize time variables -->
+    <batch:step id="initTimeStep">
+        <batch:tasklet ref="timeInitializationTasklet"/>
+    </batch:step>
+
+    <!-- Step 2: Parallel loading steps for different tables -->
+    <batch:split id="loadDataSplit" task-executor="taskExecutor">
+        
+        <!-- Flow 1: Load table1 -->
+        <batch:flow>
+            <batch:step id="loadTable1Step">
+                <batch:tasklet ref="loadTable1Tasklet"/>
+            </batch:step>
+        </batch:flow>
+
+        <!-- Flow 2: Load table2 -->
+        <batch:flow>
+            <batch:step id="loadTable2Step">
+                <batch:tasklet ref="loadTable2Tasklet"/>
+            </batch:step>
+        </batch:flow>
+
+        <!-- Add more flows for additional tables if needed -->
+        
+    </batch:split>
+
+    <!-- Step 3: Archive JSON files -->
+    <batch:step id="archiveFilesStep">
+        <batch:tasklet ref="archiveFilesTasklet"/>
+    </batch:step>
+
+</batch:job>
+
+<!-- Task Executor bean for parallel execution -->
+<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+    <property name="corePoolSize" value="5"/>
+    <property name="maxPoolSize" value="10"/>
+</bean>
