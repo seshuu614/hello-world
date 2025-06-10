@@ -38,3 +38,30 @@
     <property name="corePoolSize" value="5"/>
     <property name="maxPoolSize" value="10"/>
 </bean>
+
+
+SELECT 
+    ji.JOB_NAME,
+    je.JOB_EXECUTION_ID,
+    je.START_TIME,
+    je.END_TIME,
+    je.STATUS,
+    je.EXIT_CODE
+FROM 
+    BATCH_JOB_INSTANCE ji
+JOIN 
+    BATCH_JOB_EXECUTION je ON ji.JOB_INSTANCE_ID = je.JOB_INSTANCE_ID
+JOIN (
+    SELECT 
+        ji.JOB_NAME,
+        MAX(je.START_TIME) AS MAX_START_TIME
+    FROM 
+        BATCH_JOB_INSTANCE ji
+    JOIN 
+        BATCH_JOB_EXECUTION je ON ji.JOB_INSTANCE_ID = je.JOB_INSTANCE_ID
+    GROUP BY 
+        ji.JOB_NAME
+) latest ON ji.JOB_NAME = latest.JOB_NAME AND je.START_TIME = latest.MAX_START_TIME
+ORDER BY 
+    ji.JOB_NAME;
+
